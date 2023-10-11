@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <style>
+        .loginWrapper {
+            margin:0 auto;
+            width:500px;
+            height: 300px;
+        }
+    </style>
+    <title>오늘 뭐먹지 로그인 페이지</title>
+    <script>
+
+        function setCookie(cookie_name, value, expireseconds) {
+          let todayDate = new Date();
+          todayDate.setTime(todayDate.getTime() + (expireseconds * 60 * 60 * 24 * 1000)); // 밀리세컨드 단위로 쿠키 만료 시간 변경
+          document.cookie = cookie_name + "=" + escape(value) + "; path=/; expires=" + todayDate.toGMTString() + ";";
+        }
+
+        
+
+        //로그인 함수 아이디와 패스워드 칸의 텍스트를 보낸다
+        function login() {
+          // 인풋칸에 쓰여있는 밸류값을 가져온다.
+            let id = $('#userId').val();
+            let pwd = $('#userPassword').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: {targetId : id, targetPwd : pwd},
+                success: function (response) {
+
+                  let access_token = response['token']
+
+                  if (response['result'] == 'success') {
+                    //성공시 메인페이지로 들어가게 만드는게 필요하다 아마 location.href 를 쓸듯
+                    //로그인 성공시 발급된 토큰이 쿠키에 저장
+                    setCookie('mytoken', response['token'],30)
+                    location.href="/mainpage"
+                    alert('로그인 성공!')
+                  } else {
+                    // 실패시 새로고침도 생각해 볼수 있을것 같다.
+                    alert('아이디와 비밀번호를 다시 확인해 주십시오')
+                  }
+                }
+            });
+        }
+
+        
+
+    </script>
+</head>
+<body>
+    <div class="loginWrapper">
+            <div class="field">
+              <label class="label">아이디</label>
+              <div class="control">
+                <input class="input" type="text" id="userId" placeholder="Jungle">
+              </div>
+            </div>
+          
+            <div class="field">
+              <label class="label">비밀번호</label>
+              <div class="control">
+                <input class="input" type="password" id="userPassword" placeholder="********">
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <button class="button is-primary" style="width:300px;text-align: center;" onclick="login()">로그인</button>
+              <p></p>
+              <a href="join">아직 회원이 아니신가요?</a>
+            </div>
+    </div>
+</body>
+</html>
