@@ -8,6 +8,17 @@
       width: 100px;
     }
   </style>
+  <script>
+    function deleteCookie(name) {
+      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+    // 로그아웃
+    function logout() {
+      deleteCookie('mytoken')
+      alert('로그아웃 되었습니다.')
+      window.location.reload()
+    }
+  </script>
 </head>
 <body>
   <nav class="navbar" role="navigation" aria-label="main navigation">
@@ -20,10 +31,9 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
-          <a class="button is-light">
+          <a class="button is-light" onclick="logout()">
             Logout
           </a>
-
         </div>
       </div>
     </div>

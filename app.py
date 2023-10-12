@@ -62,7 +62,7 @@ def login():
         #payload는 토큰에 담을 정보를 뜻한다.
         payload={
         'id' : targetId,
-        'exp' : datetime.utcnow() + timedelta(seconds=10)
+        'exp' : datetime.utcnow() + timedelta(seconds=60*60*24)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
