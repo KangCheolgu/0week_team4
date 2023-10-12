@@ -41,6 +41,7 @@
                     //성공시 메인페이지로 들어가게 만드는게 필요하다 아마 location.href 를 쓸듯
                     //로그인 성공시 발급된 토큰이 쿠키에 저장
                     setCookie('mytoken', response['token'],30)
+                    setCookie('myid',id)
                     location.href="/mainpage"
                     alert('로그인 성공!')
                   } else {
@@ -50,8 +51,6 @@
                 }
             });
         }
-
-        
 
     </script>
 </head>

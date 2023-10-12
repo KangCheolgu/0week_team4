@@ -8,6 +8,8 @@ import hashlib
 import urllib.request
 import urllib.error
 import time
+import requests
+import cgi
 
 
 from flask import Flask, render_template, request, jsonify, redirect
@@ -151,10 +153,12 @@ def post():
     review=db.review.find_one({'user_id':'test'})
     return render_template('post.html', category=category, review=review)
 
-@app.route('/mydetail')
-def my_detail():
-    review=db.review.find_one({'user_id':'test'})
-    return render_template('mydetail.html', review=review)
+@app.route('/mydetail/<idnum>')
+def my_detail(idnum):
+    a = int(idnum)
+    review2=db.review.find_one({'num':a})
+    print(review2)
+    return render_template('mydetail.html', review=review2)
 
 @app.route('/mydetail_modifying')
 def modifying_detail():
@@ -172,29 +176,55 @@ def other_detail():
 # 맛집 리뷰 POST
 @app.route('/post/mydetail', methods=['POST'])
 def post_my_detail():
+    #고유 번호 생성
+    idnum = db.review.find_one(sort=[("num", -1)])["num"] + 1
+
    # 1. 클라이언트로부터 데이터를 받기
     restaurant_receive=request.form['restaurant_give']
     category_receive=request.form['category_give']
     print(category_receive)
     comment_receive=request.form['comment_give']
-   #  이미지 받기
+    location_receive=request.form['location_give']
+    user_receive=request.form['user_give']
+    file = request.files["file_give"]
+    
+    # static 폴더에 저장될 파일 이름 생성하기
+    today = datetime.now()
+    mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
+    filename = f'file-{mytime}'
+    # 확장자 나누기
+    extension = file.filename.split('.')[-1]
+    # static 폴더에 저장
+    save_to = f'static/{filename}.{extension}'
+    file.save(save_to)
 
     # 예외 처리
     if restaurant_receive=="" or comment_receive=="" or category_receive=="선택하기":
        return jsonify({'result':'empty'})
 
-    # 2. document 만들기 (TEST)
-    review = {'restaurant': restaurant_receive, 'category': category_receive, 'comment': comment_receive, 'like':0, 'locate':'kyeongki', 'name':'jungler','rate':5,'user_id':'test', 'favorite':0 }
-   # 카테고리와 이미지 추가 필요
-
+    # 2. document 만들기
+    review = {
+        'num' : idnum,
+        'restaurant': restaurant_receive,
+        'category': category_receive,
+        'comment': comment_receive,
+        'like':0,
+        'locate':location_receive,
+        'user_id':user_receive,
+        'favorite':0 ,
+        'image': f'{filename}.{extension}'
+    }
     # 3. mongoDB에 데이터 넣기
     db.review.insert_one(review)
 
-    return jsonify({'result':'success'})
+    # print(idnum)
+    # print(user_receive)
+
+    return jsonify({'result':'success','idnum':idnum})
 
 @app.route('/modify/mydetail',methods=['POST'])
 def modify_my_detail():
-    # 1. 클라이언트로부터 데이터를 받기
+    # 1. 클라이언트로부터 데이터를 받기 이미지 받기
     restaurant_receive=request.form['restaurant_give']
     category_receive=request.form['category_give']
     comment_receive=request.form['comment_give']

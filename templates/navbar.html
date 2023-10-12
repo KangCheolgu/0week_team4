@@ -15,6 +15,7 @@
     // 로그아웃
     function logout() {
       deleteCookie('mytoken')
+      deleteCookie('myid')
       alert('로그아웃 되었습니다.')
       window.location.reload()
     }

@@ -9,6 +9,14 @@
   <input id="restaurant" value="{{review['restaurant']}}" disabled />
 {% endblock %}
 
+{% block location_input %}
+<input id="location" disabled/>
+{% endblock %}
+
+{% block user_input %}
+<div style="border: solid;" id="user"></div>
+{% endblock %}
+
 {% block select %}
 {# 값 가져와서 option에 selected 속성 넣기#}
 <div class="select">
