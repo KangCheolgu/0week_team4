@@ -1,0 +1,23 @@
+{% extends "index.html" %} {% block post_title %}글 상세{% endblock %} {% block
+restaurant_input %}
+<input id="restaurant" placeholder="바꾸기 가능" />
+{% endblock %} {% block select %}
+<div class="select">
+  <select>
+    <option>선택하기</option>
+    <option>한식</option>
+    <option>중식</option>
+    <option>일식</option>
+    <option>양식</option>
+  </select>
+</div>
+{% endblock %} {% block post_textarea %}
+<textarea id="review">바꾸기 가능</textarea>
+{% endblock %} {% block mydetail_button %}
+
+<button class="button is-primary" onclick="modifyReview()">저장하기</button>
+<button class="button is-warning" onclick="location.href='/mydetail'">
+  수정취소
+</button>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "index.html" %} {% block post_title %}글 상세{% endblock %}{% block
+favorites %}
+<button class="button is-success" onclick="favoriteReview()">
+  즐겨찾기 추가</button
+>{% endblock %} {% block restaurant_input %}
+<input id="restaurant" value="value 값 넣기" disabled />
+{% endblock %} {% block select %}
+<div class="select">
+  <select disabled>
+    <option>선택하기</option>
+    <option>한식</option>
+    <option>중식</option>
+    <option>일식</option>
+    <option>양식</option>
+  </select>
+</div>
+{% endblock %} {% block post_textarea %}
+<textarea id="review" disabled>바꾸기 금지</textarea>{% endblock %} {% block
+mydetail_button %}
+
+<button class="button is-link" onclick="location.href='/mydetail_modifying'">
+  수정하기
+</button>
+<button class="button is-danger" onclick="deleteReview()">삭제하기</button>
+
+{% endblock %}
