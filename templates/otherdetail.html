@@ -1,11 +1,30 @@
-{% extends "index.html" %} {% block post_title %}글 상세{% endblock %}{% block
-favorites %}
-<button class="button is-success" onclick="favoriteReview()">
-  즐겨찾기 추가</button
->{% endblock %} {% block restaurant_input %}
-<input id="restaurant" value="value 값 넣기" disabled />
-{% endblock %} {% block post_textarea %}
-<textarea disabled id="review">바꾸기 금지</textarea>{% endblock %} {% block
-like_button %}<button id="like" class="button is-danger" onclick="likeReview()">
-  좋아요 | <span>좋아요 개수 {{likes}}</span></button
->{% endblock %}
+{% extends "index.html" %}
+{% block post_title %}글 상세{% endblock %}
+
+{% block favorites %}
+  <button class="button is-success" onclick="favoriteReview()">즐겨찾기 추가</button>
+{% endblock %}
+
+{% block restaurant_input %}
+  <input id="restaurant" value="{{review['restaurant']}}" disabled />
+{% endblock %}
+
+{% block select %}
+<div class="select">
+  <select disabled>
+    <option>{{review['category']}}</option>
+  </select>
+</div>
+{% endblock %}
+
+{% block post_textarea %}
+  <textarea disabled id="review">{{review['comment']}}</textarea>
+{% endblock %}
+
+{% block like_button %}
+  <button id="like" class="button is-danger" onclick="likeReview()"> 좋아요 | <span>좋아요 개수 {{likes}}</span></button>
+{% endblock %}
+
+{# {%block jinja_test%} 
+  {{review['restaurant']}} {{review['category']}} {{review['comment']}}
+{%endblock%} #}
