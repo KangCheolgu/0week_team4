@@ -4,7 +4,7 @@
 <div id="restcard">
 
   {% for rest in rest_list %}
-  <div class="card">
+  <div class="card" id="{{ rest['user_id'] }}">
     <header class="card-header">
       <p class="card-header-title">
         {{ rest['restaurant'] }}
@@ -19,7 +19,7 @@
       </button>
     </header>
     
-    <a href="/mydetail/{{ rest['num'] }}">
+    <a onclick="whoIs( {{ rest['num'] }})">
       <div class="row">
         <div class="card-image col-4">
           <!-- <figure class="image"> -->
@@ -36,14 +36,14 @@
         </div>
       </a>
 
-      <footer class="card-footer columns">
-        <a href="/mydetail/{{ rest['num'] }}" class="card-footer-item column is-2"><i class="far fa-regular fa-thumbs-up">{{ rest['like'] }}</i></a>
-        <a href="/mydetail/{{ rest['num'] }}" class="card-footer-item">{{ rest['locate'] }}</a>
-      </footer>
+    <footer class="card-footer columns">
+      <a onclick="whoIs({{ rest['num'] }})" class="card-footer-item column is-2"><i class="far fa-regular fa-thumbs-up">{{ rest['like'] }}</i></a>
+      <a onclick="whoIs({{ rest['num'] }})" class="card-footer-item">{{ rest['locate'] }}</a>
+    </footer>
 
   </div>
   <br>
   {% endfor %}
-  </div>
+</div>
     
   {% endblock %}

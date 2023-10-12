@@ -65,6 +65,8 @@ def login():
         'exp' : datetime.utcnow() + timedelta(seconds=60*60*24)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        # token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
+
 
         return jsonify({'result': 'success', 'token': token})
 
@@ -85,6 +87,8 @@ def signup():
             'Id': targetId,
             'Pwd': pw_hash,
             'Email': targetEmail,
+            'likelist': "",
+            'favoritelist' : ""
         }
     db.users.insert_one(doc)
 
@@ -152,22 +156,22 @@ def post():
 
 @app.route('/mydetail/<idnum>')
 def my_detail(idnum):
-    a = int(idnum)
-    review2=db.review.find_one({'num':a})
+    idnum_int = int(idnum)
+    review2=db.review.find_one({'num':idnum_int})
     print(review2)
     return render_template('mydetail.html', review=review2)
 
 @app.route('/mydetail_modifying/<idnum>')
 def modifying_detail(idnum):
-    a = int(idnum)
-    review2=db.review.find_one({'num':a})
+    idnum_int = int(idnum)
+    review2=db.review.find_one({'num':idnum_int})
     return render_template('mydetail_modifying.html',num=idnum, review=review2, category=category)
 
-@app.route('/otherdetail')
-def other_detail():
-    review=db.review.find_one({'user_id': 'test'})
+@app.route('/otherdetail/<idnum>')
+def other_detail(idnum):
+    idnum_int = int(idnum)
+    review=db.review.find_one({'num': idnum_int})
     likes=review['like']
-    
     return render_template('otherdetail.html',likes=likes, review=review)
 
 
@@ -264,13 +268,29 @@ def modify_my_detail():
 
 @app.route('/like',methods=['POST'])
 def like_review():
-    # id_receive = request.form['id']
-    # review = db.review.find_one({'_id': ObjectId(id_receive)})
-    print("test")
-    review=db.review.find_one({'user_id':'test'})
-    new_likes = review['like'] + 1
-    result = db.review.update_one({'user_id':'test'}, {'$set': {'like': new_likes}})
-    print(review['like'])
+    like_num=request.form['like_num']
+    id_cookie_receive = request.cookies.get('myid')  
+    targetId=db.users.find_one({'Id':id_cookie_receive})
+
+    # 디비의 likelist를 공백 기준으로 소팅하여 like_num 과 같은게 있다면 return failure
+    print(type(targetId['likelist']))
+
+    like_str = targetId['likelist'].split()
+    print(like_str)
+
+    for i in like_str:
+        if i == like_num:
+            return jsonify({'result': 'failure'})
+    
+    idnum_int = int(like_num)
+    review2=db.review.find_one({'num':idnum_int})
+    new_likes = review2['like'] + 1
+    new_likelist = targetId['likelist'] + like_num + " "
+
+    result = db.review.update_one({'num':idnum_int}, {'$set': {'like': new_likes}})
+    
+    result2 = db.users.update_one({'Id':id_cookie_receive}, {'$set': {'likelist': new_likelist}})
+
     # 4. 하나의 메모만 영향을 받아야 하므로 result.updated_count 가 1이면  result = success 를 보냄
     if result.modified_count == 1:
        return jsonify({'result': 'success'})
@@ -279,16 +299,32 @@ def like_review():
 
 @app.route('/favorite',methods=['POST'])
 def favorite_review():
-    # id_receive = request.form['id']
-    review=db.review.find_one({'user_id':'test'})
-    print(review)
-   
-    # 이미 즐겨찾기 되어있을 때
-    if review['favorite']==0:
-       result = db.review.update_one({'user_id':'test'}, {'$set': {'favorite':1 }})
-    elif review['favorite']==1:
-       return jsonify({'result':'existed'})
+    favorite_num=request.form['favorite_num']
+    id_cookie_receive = request.cookies.get('myid')  
+    targetId=db.users.find_one({'Id':id_cookie_receive})
 
+    # 디비의 likelist를 공백 기준으로 소팅하여 like_num 과 같은게 있다면 return failure
+    deleted_favoritelist = ""
+    favorite_str = targetId['favoritelist'].split()
+    delete_toggle = 0
+
+    # 기존의 즐겨찾기 리스트에 방금 누른 번호가 있다면 빼고 str을 다시 만든다.
+    for i in favorite_str:
+
+        if i == favorite_num:
+            delete_toggle = 1
+            continue
+        
+        deleted_favoritelist = i + " "
+
+    if delete_toggle == 1:
+        db.users.update_one({'Id':id_cookie_receive}, {'$set': {'favoritelist': deleted_favoritelist}})
+        return jsonify({'result': 'delete'})
+        
+    new_favoritelist = targetId['favoritelist'] + favorite_num + " "
+
+    result = db.users.update_one({'Id':id_cookie_receive}, {'$set': {'favoritelist': new_favoritelist}})
+   
     if result.modified_count == 1:
       return jsonify({'result': 'success'})
     else:

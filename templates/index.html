@@ -55,28 +55,35 @@
         // else showUnknownState(); 어떤 페이지를 열지 안왔을 때
       });
 
-      function likeReview(id) {
+      function likeReview(num) {
+        // 라이크 버튼을 누르면
+        // 해당 번호의 리뷰의 좋아요수 +1
+        // 유저의 좋아요 리스트에 번호가 추가되어야 한다.
+        // 그러려면 리뷰의 번호 정보, 유저의 아이디 정보, 유저의 좋아요 리스트에 이 번호가 있는지 정보
+        // 있으면 두번 누를수 없습니다. 
         $.ajax({
           type: "POST",
-          url: "/like",
-          data: { id: id, },
+          url: '/like',
+          data: { like_num : num },
+          
           success: function (response) {
             if (response["result"] == "success") {
               // 2. '좋아요 완료!' 얼럿을 띄웁니다.
               alert("좋아요 완료!");
               window.location.reload();
             } else {
-              alert("좋아요 실패ㅠㅠ");
+              alert("이미 좋아요를 하셨습니다.");
             }
           },
         });
       }
 
-      function favoriteReview(id) {
+      function favoriteReview(num) {
+
         $.ajax({
           type: "POST",
           url: "/favorite",
-          data: { id: id },
+          data: { favorite_num : num },
           success: function (response) {
             if (response["result"] == "success") {
               // 2. '좋아요 완료!' 얼럿을 띄웁니다.

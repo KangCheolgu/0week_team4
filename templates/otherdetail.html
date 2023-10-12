@@ -1,8 +1,8 @@
 {% extends "index.html" %}
-{% block post_title %}글 상세{% endblock %}
+{% block post_title %}이 가게를 추천해요!{% endblock %}
 
 {% block favorites %}
-  <button class="button is-success" onclick="favoriteReview()">즐겨찾기 추가</button>
+  <button class="button is-success" onclick="favoriteReview({{review['num']}})">즐겨찾기 추가</button>
 {% endblock %}
 
 {% block restaurant_input %}
@@ -17,12 +17,24 @@
 </div>
 {% endblock %}
 
+{% block user_input %}
+<div id="user">{{review['user_id']}}</div>
+{% endblock %}
+
+{% block location_input %}
+<input id="location" value="{{review['locate']}}" disabled/>
+{% endblock %}
+
+{% block main_image %} 
+  <img src="../static/{{review['image']}}" class="card-img-top" style="max-height: 300px">
+{% endblock %}
+
 {% block post_textarea %}
   <textarea disabled id="review">{{review['comment']}}</textarea>
 {% endblock %}
 
 {% block like_button %}
-  <button id="like" class="button is-danger" onclick="likeReview()"> 좋아요 | <span>좋아요 개수 {{likes}}</span></button>
+  <button id="like" class="button is-danger" onclick="likeReview({{review['num']}})"> 좋아요 | <span>좋아요 개수 {{likes}}</span></button>
 {% endblock %}
 
 {# {%block jinja_test%} 
