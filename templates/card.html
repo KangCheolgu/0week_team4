@@ -7,7 +7,7 @@
   <div class="card">
     <header class="card-header">
       <p class="card-header-title">
-        {{ rest['name'] }}
+        {{ rest['restaurant'] }}
       </p>
       <button class="card-header-icon" aria-label="more options">
         <span id="favorite" value="favorite" onclick="unfavorite(this)" class="icon">
@@ -22,14 +22,14 @@
     <div class="row">
       <div class="card-image col-4">
         <!-- <figure class="image"> -->
-          <img src="https://bulma.io/images/placeholders/1280x960.png" width="320px" alt="Placeholder image">
+          <img class="image" src="../static/{{ rest['image'] }}" width="320px" alt="Placeholder image">
           <!-- </figure> -->
         </div>
         <div class="card-content col-8">
           <div class="content">
             <div>{{ rest['category'] }}</div>
             <br>
-            {{ rest['rate'] }}
+            {{ rest['comment'] }}
           </div>  
         </div>
       </div>

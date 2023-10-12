@@ -17,28 +17,53 @@
       margin-left: 20rem;
       margin-right: 20rem;
     }
-    .navbar, .card {
+    .navbar {
+      width: 800px;
+      background-color: greenyellow;
+      margin-bottom: 5px;
+    }
+
+    .card {
       width: 800px;
     }
+
+    .image {
+      margin-bottom: 12px;
+    }
+
     .random, .listTitle {
       font-size: 30px;
+      margin-top: 10px;
+    }
+    .level {
+      width: 800px;
     }
     .list {
       display: flex;
-      justify-content: space-around;
+      /* justify-content: center; */
       width: 800px;
     }
     .dice {
       padding-left: 5px;
       padding-top: 5px;
     }
+    .reset {  
+      text-align: center;
+      line-height: 30px;
+      
+    }
     .edit {
       margin-bottom: 10px;
     }
-    .recommand {
+
+    .dropdown-item {
+      background-color: white;
+    }
+
+    .recommend {
       /* display: flex; */
       width: 800px;
-      height: 500px;
+      height: 340px;
       border: 0.5rem solid;
     }
     .row {
@@ -48,6 +73,21 @@
     .favoriteList {
       display: inline;
     }
+    .btn-up {
+      position: absolute;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      position: relative;
+    }
+
+    .block {
+      position: absolute;
+
+    }
+
+
     #favorite {
       display: inline;
     }
@@ -62,44 +102,94 @@
   <script>
     const Sort = {
       BY_LIKE: 'like',
-      BY_NAME: 'name', 
+      BY_RESTAURANT: 'restaurant', 
     }
-    let sortMode = Sort.BY_NAME
+  
+    let sortMode = Sort.BY_RESTAURANT
     let restdata = {{ random_rest | safe }}
-    let filterCategory = ''
+    let restdata_temp = restdata
+
+    // 내가 누른 카테고리를 기반으로 전체 리스트 필터링
     let dropdownClick = (event) => {
-      console.log(event.target.textContent)
+      restdata = restdata_temp
+
       dropdownKey = event.target.textContent
       
-      console.log(dropdownKey)
+      restdata = restdata.filter(it => it.category == dropdownKey)
+      
+      $('#beforechoice').hide()
+      $('#choice').empty()
+      $('#choice').append(
+        `<span id="afterchioce">${dropdownKey}</span>`)
     }
     
+
+    // 카테고리 초기화
+    function resetCategory() {
+      restdata = restdata_temp
+      $('#choice').empty();
+      $('#choice').append(
+        `<span id="beforechioce">카테고리 선택</span>`)
+    }
+
+    // 주사위 굴리기
     function randomDice() {
+
       let randindex = Math.floor(Math.random() * (restdata.length))
-      
       let randhtml = `
-      <div id="recommand" class="recommand">
-        <div>${restdata[randindex]['name']}</div>
-        <br>
-        <div>${restdata[randindex]['category']}</div>
-        <br>
-        <div>${restdata[randindex]['rate']}</div>
-        <br>
-        <div><i class="far fa-regular fa-thumbs-up"></i>${restdata[randindex]['like']}</div>
-        <br>
-        <div>${restdata[randindex]['locate']}</div>
+      <div id="recommend" class="recommend">
+        <div class="card recommended">
+          <header class="card-header">
+            <p class="card-header-title">
+              ${restdata[randindex]['restaurant']}
+            </p>
+            <button class="card-header-icon" aria-label="more options">
+              <span id="favorite" value="favorite" onclick="unfavorite(this)" class="icon">
+                <i class="far fa-regular fa-star"></i>
+              </span>
+              <span id="unfavorite" value="unfavorite" onclick="favorite(this)" class="icon">
+                <i class="fas fa-regular fa-star"></i>
+              </span>
+            </button>
+          </header>
+          
+          <div class="row">
+            <div class="card-image col-4">
+              <!-- <figure class="image"> -->
+                <img class="image" src="../static/${restdata[randindex]['image']}" width="300px" alt="Placeholder image">
+                <!-- </figure> -->
+              </div>
+              <div class="card-content col-8">
+                <div class="content">
+                  <div>${restdata[randindex]['category']}</div>
+                  <br>
+                  ${restdata[randindex]['comment']}
+                </div>  
+              </div>
+            </div>
+          <footer class="card-footer columns">
+            <a href="#" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">${restdata[randindex]['like']}</i></a>
+            <a href="#" class="card-footer-item">${restdata[randindex]['locate']}</a>
+          </footer>
+        </div>
       </div>
       `
-      console.log(filterCategory)
-      $('#beforereccomand').hide();
+      $('#beforerecommend').hide();
       $('#diceresult').empty();
       $('#diceresult').append(randhtml);
     }
     
-    
-      
 
+    // 좋아요 또는 즐겨찾기 버튼으로 필터링하기
+    function likeOnOff() {
+      return
+    }
 
+    function favoriteOnOff() {
+      return
+    }
+
+    // 게시글 출력
     function showRest() {
       $('#restcard').empty()
 
@@ -121,19 +211,21 @@
 
     function addRestCard(restslist) {
       rests = JSON.parse(restslist)
+      console.log(rests)
       for (let i = 0; i < rests.length; i++) {
         let rest = rests[i]
         let id = rest['_id']
-        let name = rest['name']
+        let restaurant = rest['restaurant']
         let category = rest['category']
-        let rate = rest['rate']
+        let comment = rest['comment']
         let like = rest['like']
         let locate = rest['locate']
+        let image = rest['image']
 
         let cardContentHtml = `
           <header class="card-header">
             <p class="card-header-title">
-              ${name}
+              ${restaurant}
             </p>
             <button class="card-header-icon" aria-label="more options">
               <span id="favorite" value="favorite" onclick="unfavorite(this)" class="icon">
@@ -148,14 +240,14 @@
           <div class="row">
             <div class="card-image col-4">
               <!-- <figure class="image"> -->
-                <img src="https://bulma.io/images/placeholders/1280x960.png" width="320px" alt="Placeholder image">
+                <img src="{{ url_for('static', filename='${rest_img}')}}" width="320px" alt="Placeholder image">
                 <!-- </figure> -->
               </div>
               <div class="card-content col-8">
                 <div class="content">
                   <div>${category}</div>
                   <br>
-                  ${rate}
+                  ${comment}
                 </div>  
               </div>
             </div>
@@ -173,7 +265,8 @@
         `)
       }
     }
-
+    
+    // 정렬 방식 변경
     function changeSorter(newMode) {
       if (sortMode == newMode) {
         return
@@ -185,7 +278,7 @@
     }
 
     function displaySorter() {
-      document.getElementById("sorter-name").classList.remove("active")
+      document.getElementById("sorter-restaurant").classList.remove("active")
       document.getElementById("sorter-like").classList.remove("active")
     }
 
@@ -201,54 +294,8 @@
     <span>
       <div class="dropdown is-hoverable">
         <div class="dropdown-trigger">
-          <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-            <span>카테고리 선택</span>
-            <span class="icon is-small">  
-              <i class="fas fa-angle-down" aria-hidden="true"></i>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown-menu" id="dropdown-menu" role="menu">
-          <divx class="dropdown-content">
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">
-              카테고리1
-            </a>
-            <hr class="dropdown-divider">
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">
-              카테고리2
-            </a>
-            <hr class="dropdown-divider">
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">
-              카테고리3
-            </a>
-            <hr class="dropdown-divider">
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">
-              카테고리4
-            </a>
-            <hr class="dropdown-divider">
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">
-              카테고리5
-            </a>
-          </div>
-        </div>
-      </div>
-    </span>
-    <button id="btn-dice" class="dice" onclick="randomDice()"><i class="fas fa-solid fa-dice fa-2x"></i></button>
-    <div id="diceresult">
-      <div id="beforerecommand" class="recommand">
-        <img src="{{ url_for('static', filename='wallpaper_20220419171635_2022May_2880x1800_W1.jpg')}}" alt="">
-      </div>
-    </div>
-  </div>
-
-  <br>
-  <div class="list">
-    <span class="listTitle">어디가 있을까?</span>
-    <span>
-      <div class="dropdown is-hoverable">
-        <div class="dropdown-trigger">
-          <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-            <span>DEFAULT</span>
+          <button id="choice" class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+            <span id="beforechoice">카테고리 선택</span>
             <span class="icon is-small">  
               <i class="fas fa-angle-down" aria-hidden="true"></i>
             </span>
@@ -256,24 +303,46 @@
         </div>
         <div class="dropdown-menu" id="dropdown-menu" role="menu">
           <div class="dropdown-content">
-            <a href="#" class="dropdown-item" onclick="changeSorter('name')" id="sorter-name">
-              이름순 정렬
-            </a>
-            <a href="#" class="dropdown-item" onclick="changeSorter('like')"  id="sorter-like">
-              좋아요순 정렬
-            </a>
+            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">한식</a>
+            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">중식</a>
+            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">일식</a>
+            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">양식</a>
           </div>
         </div>
       </div>
     </span>
-
-    <a class="favoriteList"><i class="far fa-regular fa-thumbs-up fa-2x"></i></a>
-
-    <a class="favoriteList"><i class="far fa-regular fa-star fa-2x"></i></a>
-
-    <a href="post" class="edit">글 작성</a>
+    <button id="btn-dice" class="dice" onclick="randomDice()"><i class="fas fa-solid fa-dice fa-2x"></i></button>
+    <button id="btn-reset" class="reset" onclick="resetCategory()">초기화</button>
+    
+    
+    <div id="diceresult">
+      <div id="beforerecommend" class="recommend">
+      </div>
+    </div>
   </div>
 
+  <br>
+  <hr>
+  <nav class="level">
+    <p class="level-item has-text-centered">
+      <a href="javascript:void(0);" class="dropdown-item column" onclick="changeSorter('restaurant')" id="sorter-restaurant">이름순</a>
+    </p>
+    <p class="level-item has-text-centered">
+      <a href="javascript:void(0);" class="dropdown-item column" onclick="changeSorter('like')"  id="sorter-like">좋아요순</a>
+    </p>
+    <p class="level-item has-text-left">
+      <span class="listTitle column">어디가 있을까?</span>
+    </p>
+    <p class="level-item has-text-centered">
+      <a id="likeonoff" class="likeList column" onclick="likeOnOff()"><i class="far fa-regular fa-thumbs-up fa-2x"></i></a>
+      
+      <a id="favoriteonoff" class="favoriteList column" onclick="favoriteOnOff()"><i class="far fa-regular fa-star fa-2x"></i></a>
+    </p>
+    <p class="level-item has-text-centered">
+      <a href="post" class="edit column">글 작성</a>
+    </p>
+  </nav>
+  
   <div class="wrap">
     {% block content %} {% endblock %}
   </div>
