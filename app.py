@@ -144,23 +144,29 @@ def show_rests():
 # def contents():
 #     return render_template('index.html')
 
+category={'한식', '중식', '일식', '양식'}
+
 @app.route('/post')
 def post():
-    return render_template('post.html')
+    review=db.review.find_one({'user_id':'test'})
+    return render_template('post.html', category=category, review=review)
 
 @app.route('/mydetail')
 def my_detail():
-    return render_template('mydetail.html')
+    review=db.review.find_one({'user_id':'test'})
+    return render_template('mydetail.html', review=review)
 
 @app.route('/mydetail_modifying')
 def modifying_detail():
-    return render_template('mydetail_modifying.html')
+    review=db.review.find_one({'user_id':'test'})
+    return render_template('mydetail_modifying.html', review=review, category=category)
 
 @app.route('/otherdetail')
 def other_detail():
-   my_review=db.review.find_one({'user_id': 'test'})
-   likes=my_review['like']
-   return render_template('otherdetail.html',likes=likes)
+    review=db.review.find_one({'user_id': 'test'})
+    likes=review['like']
+    
+    return render_template('otherdetail.html',likes=likes, review=review)
 
 
 # 맛집 리뷰 POST
@@ -169,11 +175,12 @@ def post_my_detail():
    # 1. 클라이언트로부터 데이터를 받기
     restaurant_receive=request.form['restaurant_give']
     category_receive=request.form['category_give']
+    print(category_receive)
     comment_receive=request.form['comment_give']
    #  이미지 받기
 
     # 예외 처리
-    if restaurant_receive=="" or comment_receive=="":
+    if restaurant_receive=="" or comment_receive=="" or category_receive=="선택하기":
        return jsonify({'result':'empty'})
 
     # 2. document 만들기 (TEST)
@@ -191,25 +198,36 @@ def modify_my_detail():
     restaurant_receive=request.form['restaurant_give']
     category_receive=request.form['category_give']
     comment_receive=request.form['comment_give']
-   #  이미지 받기
+    # id_receive=request.form['id_give']
+    # 이미지 받기
 
-    # 예외 처리
-    if restaurant_receive=="" or comment_receive=="":
+    # 예외 처리1: 빈칸으로 수정할 때
+    if restaurant_receive=="" or comment_receive=="" or category_receive=="선택하기":
        return jsonify({'result':'empty'})
 
-    # 2. document 만들기 (TEST)
-    review = {'restaurant': restaurant_receive, 'category': category_receive, 'comment': comment_receive, 'like':0, 'locate':'kyeongki', 'name':'jungler','rate':5,'user_id':'test', 'favorite':0 }
-   # 카테고리와 이미지 추가 필요
 
-    # 3. mongoDB에 데이터 넣기
-    db.review.insert_one(review)
+    # 예외 처리2: 아무것도 수정하지 않았을 때 
+    flag = True # 무엇인가 최소 하나 수정한 상태를 전제로
+    changed_or_not = db.review.find_one({'user_id': 'test3'})
+    if changed_or_not['restaurant']==restaurant_receive and changed_or_not['comment']==comment_receive and changed_or_not['category']==category_receive:
+       flag = False # 아무것도 수정하지 않았다.
 
-    return jsonify({'result':'success'})
+    result = db.review.update_one({'user_id': 'test3'},{'$set': {'restaurant': restaurant_receive, 'category':category_receive, 'comment': comment_receive, }})
+    # DB 아이디 쓰는 경우: '_id': ObjectId(id_receive)
+    # 이미지 추가 필요
+
+    print(result.modified_count)
+    print(flag)
+    if result.modified_count == 1 and flag: # 수정한 document가 1개이고, 무엇인가 최소 하나 수정한 상태라면 성공
+      return jsonify({'result': 'success'})
+    else: # 수정한 document가 1이 아니거나, 아무것도 수정되지 않은 경우 실패
+      return jsonify({'result': 'failure'})
 
 @app.route('/like',methods=['POST'])
 def like_review():
     # id_receive = request.form['id']
     # review = db.review.find_one({'_id': ObjectId(id_receive)})
+    print("test")
     review=db.review.find_one({'user_id':'test'})
     new_likes = review['like'] + 1
     result = db.review.update_one({'user_id':'test'}, {'$set': {'like': new_likes}})

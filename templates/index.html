@@ -76,7 +76,7 @@
         $.ajax({
           type: "POST",
           url: "/like",
-          data: { id: id },
+          data: { id: id, },
           success: function (response) {
             if (response["result"] == "success") {
               // 2. '좋아요 완료!' 얼럿을 띄웁니다.
@@ -140,9 +140,10 @@
           success: function (response) {
             if (response["result"] == "success") {
               alert("성공!");
-              // 글 상세 페이지 (본인) 으로 이동하는 부분 추가하기?
+              window.location.href="/mydetail";
+              // 글 상세 페이지 (본인) 으로 이동하는 부분. id와 연관시키는 것이 필요하다.
             } else if (response["result"] == "empty") {
-              alert("제목과 평가글을 모두 작성해주세요!");
+              alert("제목, 평가글, 카테고리를 모두 채워주세요!");
             } else {
               alert("작성 실패!");
               // 초기화하기
@@ -181,6 +182,7 @@
           },
         });
       }
+      
       function modifyReview(id) {
         // 작성 버튼
         let restaurant = $("#restaurant").val(); // 음식점 이름 불러오기
@@ -193,20 +195,22 @@
             restaurant_give: restaurant,
             category_give: category,
             comment_give: comment,
+            id_give: id,
           },
           success: function (response) {
             if (response["result"] == "success") {
-              alert("성공!");
-              // 글 상세 페이지 (본인) 으로 이동하는 부분 추가하기?
+              alert("수정 성공!");
+              // 글 상세 페이지 (본인) 으로 이동하는 부분 추가하기
             } else if (response["result"] == "empty") {
-              alert("제목과 평가글을 모두 작성해주세요!");
+              alert("제목, 평가글, 카테고리를 모두 채워주세요!");
             } else {
-              alert("작성 실패!");
+              alert("수정 사항이 없습니다!");
               // 초기화하기
             }
           },
         });
       }
+
     </script>
   </head>
   <!-- 글 작성, 상세(본인, 타인) 페이지 -->
@@ -214,35 +218,33 @@
     <div class="wrap card" id="post-list">
       <div class="card-content">
         <p class="title">
-          {% block post_title %}{% endblock %} {% block favorites %}{% endblock
-          %}
+          {% block post_title %}{% endblock %}
+          {% block favorites %}{% endblock %}
         </p>
         <div class="top columns">
           <div class="column is-two-thirds">
-            {% block restaurant_input %}{% endblock %} {% block select %} {%
-            endblock %}
-
-            <div>위치</div>
-            <!-- db에서 위치 정보 -->
+            {# 음식점 이름 #}
+            {% block restaurant_input %}{% endblock %}
+            {# 카테고리 드롭다운 #}
+            {% block select %} {% endblock %}
+            {# db에서 위치 정보 #}
+            {% block lodation%} {%endblock%}
           </div>
-
+          {# 사진 정보 #}
           <div class="column">사진</div>
         </div>
       </div>
-      <!-- 글 작성 페이지일 때만 사진업로드 가능하도록 만들기-->
+      <!-- 글 작성 페이지, 글 수정 페이지일 때만 사진 업로드 가능-->
       {% block upload_image %}{% endblock %}
-      <!-- 글 작성 페이지일 때만 textarea 작성 가능하도록 만들기-->
+      <!-- 글 작성 페이지, 글 수정 페이지일 때만 textarea 작성 가능-->
       {% block post_textarea %}{% endblock %}
       <footer class="card-footer">
         <!-- 글 작성 페이지일 때만 작성버튼 표시 -->
         {% block post_button %}{% endblock %}
-        <!-- <button>작성</button> -->
         <!-- 글 상세 페이지(본인)일 때만 수정, 삭제 버튼 표시 -->
         <section id="mydetail_button">
           {% block mydetail_button %}{% endblock %}
         </section>
-        <!-- <button>수정</button>
-        <button>삭제</button> -->
         <!-- 글 상세 페이지(타인)일 때만 좋아요 버튼, 좋아요 수 표시 -->
         {% block like_button %}{% endblock %}
         <!-- <button>좋아요 <span>좋아요 수</span></button> -->
@@ -252,5 +254,6 @@
         </button>
       </footer>
     </div>
+    {%block jinja_test%}{%endblock%}
   </body>
 </html>

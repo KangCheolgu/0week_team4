@@ -1,8 +1,13 @@
-{% extends "index.html" %} {% block post_title %}글 작성{% endblock %}{% block
-upload_image %}<button class="button is-warning">사진 업로드</button>{% endblock
-%} {% block restaurant_input %}
-<input id="restaurant" placeholder="바꾸기 가능" />
-{% endblock %} {% block select %}
+{% extends "index.html" %}
+{% block post_title %}글 작성{% endblock %}
+
+{% block upload_image %}<button class="button is-warning">사진 업로드</button>{% endblock%}
+
+{% block restaurant_input %}
+  <input id="restaurant" placeholder="음식점 이름" />
+{% endblock %}
+
+{% block select %}
 <div class="select">
   <select>
     <option>선택하기</option>
@@ -12,9 +17,22 @@ upload_image %}<button class="button is-warning">사진 업로드</button>{% end
     <option>양식</option>
   </select>
 </div>
-{% endblock %} {% block post_textarea %}
-<textarea id="review">평가 및 추천 이유</textarea>{% endblock %} {% block
-post_button %}<button class="button is-info" onclick="postReview()">
-  작성
-</button>
 {% endblock %}
+
+{% block post_textarea %}
+  <textarea id="review" placeholder="평가 및 추천 이유"></textarea>
+{% endblock %}
+
+{% block post_button %}
+  <button class="button is-info" onclick="postReview()">
+    작성
+  </button>
+{% endblock %}
+{# {%block jinja_test%}
+    {%for c in category%}
+        <option>{{c}}</option>
+        {% if c == review['category']%}
+          <div>true</div>
+        {% endif %}
+    {% endfor %}
+{%endblock%} #}
