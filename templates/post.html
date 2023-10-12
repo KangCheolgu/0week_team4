@@ -1,6 +1,6 @@
 {% extends "index.html" %} 
 
-{% block post_title %}글 작성{% endblock %}
+{% block post_title %}추천 글 작성{% endblock %}
 
 {% block upload_image %}
 <div class="custom-file">
@@ -8,18 +8,20 @@
 </div>
 {% endblock %} 
 
+{% block preview_image %} <img id="preview" src="#" onerror="this.src='../static/fork.jpg'" /> {% endblock %} 
+
+
 {% block restaurant_input %}
-<input id="restaurant" placeholder="음식점 상호를 입력해 주십시오" />
+<input style="border: 1px solid #dbdbdb;" id="restaurant" placeholder="음식점 상호를 입력해 주십시오" />
 {% endblock %}
 
 {% block location_input %}
-<input id="location" placeholder="위치를 입력해 주십시오" />
+<input style="border: 1px solid #dbdbdb;" id="location" placeholder="위치를 입력해 주십시오" />
 {% endblock %}
 
 
 {% block user_input %}
-<!-- 작성자는 나중에 불러올 예정 -->
-<div style="border: solid;" id="user" placeholder="작성자를 입력해 주십시오"></div>
+<div style="font-size: 20px; border: 1px solid #dbdbdb; padding-left: 15px; padding-top: 8px; text-align: left;" id="user">{{review['user_id']}}</div>
 {% endblock %}
 
 
@@ -36,7 +38,7 @@
 {% endblock %}
 
 {% block post_textarea %}
-<textarea style="width: 95%;height: 100px;"; id="review" placeholder="평가 및 추천 이유"></textarea>
+<textarea id="review" placeholder="평가 및 추천 이유"></textarea>
 {% endblock %} 
 {% block post_button %}
 <button class="button is-info" onclick="postReview()">

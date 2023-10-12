@@ -1,5 +1,5 @@
 {% extends "index.html" %}
-{% block post_title %}글 상세{% endblock %}
+{% block post_title %}이 가게를 추천해요!{% endblock %}
 
 {% block favorites %}
   <button class="button is-success" onclick="favoriteReview()">즐겨찾기 추가</button>
@@ -10,11 +10,11 @@
 {% endblock %}
 
 {% block location_input %}
-<input id="location" disabled/>
+<input id="location" value="{{review['locate']}}" disabled/>
 {% endblock %}
 
 {% block user_input %}
-<div style="border: solid;" id="user"></div>
+<div id="user">{{review['user_id']}}</div>
 {% endblock %}
 
 {% block select %}
@@ -26,15 +26,19 @@
 </div>
 {% endblock %}
 
+{% block main_image %} 
+  <img src="../static/{{review['image']}}" class="card-img-top" style="max-height: 300px">
+{% endblock %}
+
 {% block post_textarea %}
 <textarea id="review" disabled>{{review['comment']}}</textarea>
 {% endblock %}
 
 {% block mydetail_button %}
-  <button class="button is-link" onclick="location.href='/mydetail_modifying'">
-    수정하기
-  </button>
-  <button class="button is-danger" onclick="deleteReview()">삭제하기</button>
+  <a class="button is-link" href="/mydetail_modifying/{{review['num']}}">
+    수정하기 {{review['idnum']}}
+  </a>
+  <button class="button is-danger" onclick="deleteReview({{review['num']}})">삭제하기</button>
 {% endblock %}
 
 {# {%block jinja_test%} 

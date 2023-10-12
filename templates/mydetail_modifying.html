@@ -1,16 +1,30 @@
 {% extends "index.html" %}
-{% block post_title %}글 상세{% endblock %}
+{% block post_title %}추천 글 수정{% endblock %}
 
-{% block upload_image %}<button class="button is-warning">사진 업로드</button>{% endblock%}
+{% block upload_image %}
+  <div class="custom-file">
+    <input type="file" class="custom-file-input" id="img-file" onchange="readURL(this);">
+  </div>
+{% endblock %} 
+
+{% block preview_image %} <img id="preview" src="#" onerror="this.src='../static/fork.jpg'" /> {% endblock %} 
 
 {% block restaurant_input %}
 <input id="restaurant" value="{{review['restaurant']}}" />
 {% endblock %}
 
+{% block location_input %}
+<input id="location" value="{{review['locate']}}" />
+{% endblock %}
+
+{% block user_input %}
+<div id="user">{{review['user_id']}}</div>
+{% endblock %}
+
 {% block select %}
 <div class="select">
   <select>
-    <option>선택하기</option>
+    <option>카테고리 선택</option>
     {%for c in category%}
       {%if c == review['category']%}
         <option selected>{{c}}</option>
@@ -27,8 +41,8 @@
 {% endblock %}
 
 {% block mydetail_button %}
-  <button class="button is-primary" onclick="modifyReview()">저장하기</button>
-  <button class="button is-warning" onclick="location.href='/mydetail'">
+  <button class="button is-primary" onclick="modifyReview('{{num}}')">저장하기</button>
+  <a class="button is-warning" href="/mydetail/{{review['num']}}">
     수정취소
-  </button>
+  </a>
 {% endblock %}

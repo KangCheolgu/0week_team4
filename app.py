@@ -146,8 +146,9 @@ category={'한식', '중식', '일식', '양식'}
 
 @app.route('/post')
 def post():
-    review=db.review.find_one({'user_id':'test'})
-    return render_template('post.html', category=category, review=review)
+    cookie_receive = request.cookies.get('myid')
+    review2=db.review.find_one({'user_id':cookie_receive})
+    return render_template('post.html', category=category, review=review2)
 
 @app.route('/mydetail/<idnum>')
 def my_detail(idnum):
@@ -156,10 +157,11 @@ def my_detail(idnum):
     print(review2)
     return render_template('mydetail.html', review=review2)
 
-@app.route('/mydetail_modifying')
-def modifying_detail():
-    review=db.review.find_one({'user_id':'test'})
-    return render_template('mydetail_modifying.html', review=review, category=category)
+@app.route('/mydetail_modifying/<idnum>')
+def modifying_detail(idnum):
+    a = int(idnum)
+    review2=db.review.find_one({'num':a})
+    return render_template('mydetail_modifying.html',num=idnum, review=review2, category=category)
 
 @app.route('/otherdetail')
 def other_detail():
@@ -178,7 +180,6 @@ def post_my_detail():
    # 1. 클라이언트로부터 데이터를 받기
     restaurant_receive=request.form['restaurant_give']
     category_receive=request.form['category_give']
-    print(category_receive)
     comment_receive=request.form['comment_give']
     location_receive=request.form['location_give']
     user_receive=request.form['user_give']
@@ -221,31 +222,43 @@ def post_my_detail():
 @app.route('/modify/mydetail',methods=['POST'])
 def modify_my_detail():
     # 1. 클라이언트로부터 데이터를 받기 이미지 받기
+    num_receive=request.form['num_give']
     restaurant_receive=request.form['restaurant_give']
     category_receive=request.form['category_give']
     comment_receive=request.form['comment_give']
-    # id_receive=request.form['id_give']
+    location_receive=request.form['location_give']
+    file2 = request.files["file_give"]
     # 이미지 받기
+
+    # static 폴더에 저장될 파일 이름 생성하기
+    today = datetime.now()
+    mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
+    filename = f'file-{mytime}'
+    # 확장자 나누기
+    extension = file2.filename.split('.')[-1]
+    # static 폴더에 저장
+    save_to = f'static/{filename}.{extension}'
+    file2.save(save_to)
 
     # 예외 처리1: 빈칸으로 수정할 때
     if restaurant_receive=="" or comment_receive=="" or category_receive=="선택하기":
        return jsonify({'result':'empty'})
 
-
+    a = int(num_receive)
     # 예외 처리2: 아무것도 수정하지 않았을 때 
     flag = True # 무엇인가 최소 하나 수정한 상태를 전제로
-    changed_or_not = db.review.find_one({'user_id': 'test3'})
-    if changed_or_not['restaurant']==restaurant_receive and changed_or_not['comment']==comment_receive and changed_or_not['category']==category_receive:
+    changed_or_not = db.review.find_one({'num': a})
+    if changed_or_not['restaurant']==restaurant_receive and changed_or_not['comment']==comment_receive and changed_or_not['category']==category_receive and changed_or_not['locate']==location_receive:
        flag = False # 아무것도 수정하지 않았다.
 
-    result = db.review.update_one({'user_id': 'test3'},{'$set': {'restaurant': restaurant_receive, 'category':category_receive, 'comment': comment_receive, }})
+    result = db.review.update_one({'num': a},{'$set': {'restaurant': restaurant_receive, 'category':category_receive, 'comment': comment_receive, 'image': f'{filename}.{extension}', 'locate':location_receive}})
     # DB 아이디 쓰는 경우: '_id': ObjectId(id_receive)
     # 이미지 추가 필요
-
+    print(type(num_receive))
     print(result.modified_count)
     print(flag)
     if result.modified_count == 1 and flag: # 수정한 document가 1개이고, 무엇인가 최소 하나 수정한 상태라면 성공
-      return jsonify({'result': 'success'})
+      return jsonify({'result': 'success','idnum': a})
     else: # 수정한 document가 1이 아니거나, 아무것도 수정되지 않은 경우 실패
       return jsonify({'result': 'failure'})
 
@@ -283,10 +296,11 @@ def favorite_review():
     
 @app.route('/delete',methods=['POST'])
 def delete_review():
-    # id_receive = request.form['id']
+    num_receive = request.form['num']
+    num_int = int(num_receive)
     # result = db.review.delete_one({'_id': ObjectId(id_receive)})
 
-    result = db.review.delete_one({'user_id':'123abc'})
+    result = db.review.delete_one({'num':num_int})
     # 3. 하나의 영화만 영향을 받아야 하므로 result.updated_count 가 1이면  result = success 를 보냄
     if result.deleted_count == 1:
         return jsonify({'result': 'success'})

@@ -48,8 +48,6 @@
 
       $(document).ready(function () {
         // alert("페이지가 로딩되었습니다.");
-        let userid = setIdToken();
-        $("#user").append(userid);
         $("post-list").html(""); // 포스트 페이지를 한 번 싹 지우고
         if (CurrentState == State.POST) showReviewPost();
         else if (CurrentState == State.MY_DETAIL) showMyDetail();
@@ -92,16 +90,17 @@
           },
         });
       }
-      function deleteReview(id) {
+      function deleteReview(num) {
         $.ajax({
           type: "POST",
           url: "/delete",
-          data: { id: id },
+          data: { num: num },
           success: function (response) {
             if (response["result"] == "success") {
               // 2. '삭제되었습니다!' 얼럿을 띄웁니다.
               alert("리뷰가 삭제되었습니다!");
               // 3. 변경된 정보를 반영하기 위해 새로고침합니다.
+              window.location.href = "/mainpage"
             } else {
               alert("리뷰 삭제 실패ㅠㅠ");
             }
@@ -139,7 +138,7 @@
               alert("성공!");
               let idnum = response["idnum"];
               let go = "/mydetail/"+idnum;
-              window.location.href= go;
+              window.location.href = go;
               // 글 상세 페이지 (본인) 으로 이동하는 부분. id와 연관시키는 것이 필요하다.
             } else if (response["result"] == "empty") {
               alert("제목, 평가글, 카테고리를 모두 채워주세요!");
@@ -182,24 +181,38 @@
         });
       }
       
-      function modifyReview(id) {
-        // 작성 버튼
+      function modifyReview(num) {
+        console.log(num)
         let restaurant = $("#restaurant").val(); // 음식점 이름 불러오기
-        let category = $("select > option:selected").val();
+        let location = $("#location").val(); // 위치 불러오기
+        let category = $("select > option:selected").val(); // 카테고리
         let comment = $("#review").val(); // 리뷰글 불러오기
+        let file = $('#img-file')[0].files[0]; // 사진
+
+        let form_data = new FormData()
+
+        form_data.append("restaurant_give", restaurant)
+        form_data.append("category_give", category)
+        form_data.append("comment_give", comment)
+        form_data.append("location_give", location)
+        form_data.append("file_give", file)
+        form_data.append("num_give", num)
+
         $.ajax({
           type: "POST",
           url: "/modify/mydetail",
-          data: {
-            restaurant_give: restaurant,
-            category_give: category,
-            comment_give: comment,
-            id_give: id,
-          },
+          data: form_data,
+          cache: false,
+          contentType: false,
+          processData: false,
           success: function (response) {
             if (response["result"] == "success") {
               alert("수정 성공!");
               // 글 상세 페이지 (본인) 으로 이동하는 부분 추가하기
+              
+              let idnum = response["idnum"];
+              let go = "/mydetail/"+idnum;
+              window.location.href = go;
             } else if (response["result"] == "empty") {
               alert("제목, 평가글, 카테고리를 모두 채워주세요!");
             } else {
@@ -223,16 +236,14 @@
 
     <style>
       * {
-        margin: 0px;
-      }
-      .select * {
-        width: 100%;
-        height: 60px;
-        border: none;
+        margin: 0px auto;
       }
 
+      .select * {
+        width: 100%;
+      }
       .select {
-        width: 94%;
+        width: 100%;
       }
 
       tr {
@@ -241,7 +252,7 @@
       .wrap {
         border: 1px solid gray;
         width: 800px;
-        height: 600px;
+        height: 700px;
         margin: 0 auto;
         margin-top: 20px;
         display: flex;
@@ -249,13 +260,7 @@
         align-items: stretch;
         text-align: center;
       }
-      .top.columns {
-        border: 1px solid gray;
-      }
-      .column {
-        border: 1px solid gray;
-      }
-
+    
       #restaurant {
         padding: 0;
         padding-left: 15px;
@@ -269,58 +274,74 @@
         height: 50px;
       }
       #user {
-        padding: 0;
-        padding-left: 15px;
-        width: 100%;
+        font-size: 20px; border: 1px solid #dbdbdb; padding-left: 15px; padding-top: 8px; text-align: left;
         height: 50px;
       }
+
+      textarea {
+        width: 95%;
+        height: 100px;
+      }
+
+      input {
+        border: 1px solid #dbdbdb;
+      }
+
     </style>
   </head>
   <!-- 글 작성, 상세(본인, 타인) 페이지 -->
   <body>
     <div class="wrap card" id="post-list">
       <div class="card-content">
-        <p class="title">
-          {% block post_title %}{% endblock %} {% block favorites %}{% endblock %}
-        </p>
-        
-        <table style="width: 100%; height: 300px; border:solid">
-          <tbody style="padding:0px">
-            <tr>
-              <td style="width:300px;height: 60px; padding:10px;">{% block restaurant_input %}{% endblock %}</td>
-              <td rowspan="3" style="border: 1px solid;">
+          <div class="columns">
+            <div class="column is-8 title" style="margin-left: 105px;">
+              {% block post_title %}{% endblock %}
+            </div>
+            <div class="column">
+              {% block favorites %}{% endblock %}
+            </div>
+          </div>        
+        <div class="columns" style="width: 750px;">
+          <div class="column is-4" style="padding:0; padding-right:10px">
+            <div style="margin-bottom: 20px;">
+              <label class="label">카테고리</label>
+              <div>{% block select %} {% endblock %}</div>
+            </div>
+            <div>
+              <label class="label">상호</label>
+              <div style="margin-bottom: 20px;">{% block restaurant_input %}{% endblock %}</div>
+            </div>
+            <div style="margin-bottom: 20px;">
+              <div>
+                <label class="label">위치</label>
+                {% block location_input %} {% endblock %}
+              </div>
+            </div>
+            <div>
+              <div>
                 <div>
-                  <img id="preview" src="#" width=100% height=400px />
-                </div>
-              </td>
-            </tr>
-            <tr style="height: 40px;">
-              <td>{% block select %} {% endblock %}</td>
-            </tr>
-            <tr style="height: 60px;">
-              <td style="padding:10px;">
-                <div>
-                  {% block location_input %} {% endblock %}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:10px;">
-                <div>
+                  <label class="label">작성자</label>
                   {% block user_input %} {% endblock %}
                 </div>
-              </td>
-              <td>
-                <!-- 글 작성 페이지일 때만 사진업로드 가능하도록 만들기-->
-                {% block upload_image %}{% endblock %}</td>
-            </tr>
-          </tbody>
-        </table>
-        
+              </div>
+            </div>
+          </div>
+
+          <div class="column" style="border: 1px solid;">
+            <div style="padding:10px;width: 100%; height: 340px;">
+              {% block preview_image %} {% endblock %}
+              {% block main_image %} {% endblock %}
+            </div>
+            <div>
+              <!-- 글 작성 페이지일 때만 사진업로드 가능하도록 만들기-->
+              {% block upload_image %}{% endblock %}
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- 글 작성 페이지일 때만 textarea 작성 가능하도록 만들기-->
-      <div style="margin: auto; width:95%">
+      <div style="margin: 20px auto; width:95%">
         {% block post_textarea %}{% endblock %}
       </div>
       <footer class="card-footer">
@@ -333,7 +354,7 @@
         <!-- 글 상세 페이지(타인)일 때만 좋아요 버튼, 좋아요 수 표시 -->
         {% block like_button %}{% endblock %}
         <!-- <button>좋아요 <span>좋아요 수</span></button> -->
-        <button class="button is-dark" onclick="location.href='/'">
+        <button class="button is-dark" onclick="location.href='/mainpage'" style="margin-left: 15px;">
           <!-- 나중에 경로 다시 설정 -->
           나가기
         </button>
