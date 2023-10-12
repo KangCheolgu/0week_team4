@@ -1,0 +1,46 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div id="restcard">
+
+  {% for rest in rest_list %}
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">
+        {{ rest['name'] }}
+      </p>
+      <button class="card-header-icon" aria-label="more options">
+        <span id="favorite" value="favorite" onclick="unfavorite(this)" class="icon">
+          <i class="far fa-regular fa-star"></i>
+        </span>
+        <span id="unfavorite" value="unfavorite" onclick="favorite(this)" class="icon">
+          <i class="fas fa-regular fa-star"></i>
+        </span>
+      </button>
+    </header>
+    
+    <div class="row">
+      <div class="card-image col-4">
+        <!-- <figure class="image"> -->
+          <img src="https://bulma.io/images/placeholders/1280x960.png" width="320px" alt="Placeholder image">
+          <!-- </figure> -->
+        </div>
+        <div class="card-content col-8">
+          <div class="content">
+            <div>{{ rest['category'] }}</div>
+            <br>
+            {{ rest['rate'] }}
+          </div>  
+        </div>
+      </div>
+      
+      <footer class="card-footer columns">
+        <a href="#" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">{{ rest['like'] }}</i></a>
+        <a href="#" class="card-footer-item">{{ rest['locate'] }}</a>
+      </footer>
+    </div>
+    <br>
+    {% endfor %}
+  </div>
+    
+    {% endblock %}

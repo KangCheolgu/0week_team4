@@ -1,5 +1,7 @@
 from bson import ObjectId
 from pymongo import MongoClient
+from bson.json_util import dumps
+import json
 import jwt
 from datetime import datetime,timedelta
 import hashlib
@@ -29,11 +31,13 @@ def joinpage():
 @app.route('/mainpage')
 def mainpage():
     token_receive = request.cookies.get('mytoken')
+    
+    rest_list = list(db.dbjungle.find({}, {'_id':False}))
 
     #받은 토큰을 복호화 한 다음 시간이나 증명에 문제가 있다면 예외처리합니다.
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        return render_template('mainpage.html')
+        return render_template('card.html', rest_list = rest_list, random_rest = json.dumps(rest_list))
     except jwt.ExpiredSignatureError:
         return redirect("http://localhost:5000/")
     except jwt.exceptions.DecodeError:
@@ -111,6 +115,20 @@ def menuScraping():
 
     return menu
   
+
+@app.route('/api/list', methods=['GET'])
+def show_rests():
+    sortMode = request.args.get('sortMode', 'like')
+
+    if sortMode == 'like':
+        restslist = list(db.junglefood.find({}).sort('like', -1))
+    elif sortMode == 'name':
+        restslist = list(db.junglefood.find({}).sort('name', 1))
+    else:
+        return jsonify({'result': 'failure'})
+
+    return jsonify({'result': 'success', 'rest_list': dumps(restslist)})
+
 
 
 if __name__ == '__main__':  
