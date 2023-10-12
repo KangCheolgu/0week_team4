@@ -19,10 +19,18 @@
     }
     .navbar {
       width: 800px;
-      background-color: greenyellow;
+      background-color: lightsteelblue;
       margin-bottom: 5px;
+      
     }
-
+    .button {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+    .fa-star {
+      line-height: 0.8;
+    }
     .card {
       width: 800px;
     }
@@ -40,16 +48,14 @@
     }
     .list {
       display: flex;
-      /* justify-content: center; */
       width: 800px;
     }
     .dice {
       padding-left: 5px;
-      padding-top: 5px;
+      padding-top: 9px;
     }
-    .reset {  
-      text-align: center;
-      line-height: 30px;
+    .reset {
+      padding-top: 17px;
       
     }
     .edit {
@@ -76,6 +82,9 @@
     .btn-up {
       position: absolute;
       scroll-behavior: smooth;
+    }
+    .card-footer-item {
+      margin-left: 10px;
     }
 
     .container {
@@ -152,10 +161,10 @@
               </span>
             </button>
           </header>
-          
-          <div class="row">
-            <div class="card-image col-4">
-              <!-- <figure class="image"> -->
+          <a href="/mydetail/${restdata[randindex]['num']}">
+            <div class="row">
+              <div class="card-image col-4">
+                <!-- <figure class="image"> -->
                 <img class="image" src="../static/${restdata[randindex]['image']}" width="300px" alt="Placeholder image">
                 <!-- </figure> -->
               </div>
@@ -165,11 +174,12 @@
                   <br>
                   ${restdata[randindex]['comment']}
                 </div>  
-              </div>
+               </div>
             </div>
+          </a>
           <footer class="card-footer columns">
-            <a href="#" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">${restdata[randindex]['like']}</i></a>
-            <a href="#" class="card-footer-item">${restdata[randindex]['locate']}</a>
+            <a href="/mydetail/${restdata[randindex]['num']}" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">${restdata[randindex]['like']}</i></a>
+            <a href="/mydetail/${restdata[randindex]['num']}" class="card-footer-item">${restdata[randindex]['locate']}</a>
           </footer>
         </div>
       </div>
@@ -221,6 +231,7 @@
         let like = rest['like']
         let locate = rest['locate']
         let image = rest['image']
+        let num = rest['num']
 
         let cardContentHtml = `
           <header class="card-header">
@@ -240,7 +251,7 @@
           <div class="row">
             <div class="card-image col-4">
               <!-- <figure class="image"> -->
-                <img src="{{ url_for('static', filename='${rest_img}')}}" width="320px" alt="Placeholder image">
+                <img src="../static/${[image]}" width="320px" alt="Placeholder image">
                 <!-- </figure> -->
               </div>
               <div class="card-content col-8">
@@ -271,26 +282,26 @@
       if (sortMode == newMode) {
         return
       }
-
+      
       sortMode = newMode
       displaySorter()
       showRest()
     }
-
+    
     function displaySorter() {
       document.getElementById("sorter-restaurant").classList.remove("active")
       document.getElementById("sorter-like").classList.remove("active")
     }
-
-  </script>
+    
+    </script>
 </head>
 <body>
-
+  
   {% include "navbar.html" %}
-
-
+  
+  
   <div>
-    <span class="random">오늘 뭐 먹지?</span>
+    <span class="random">오늘 뭐 먹지?&nbsp;&nbsp;&nbsp;</span>
     <span>
       <div class="dropdown is-hoverable">
         <div class="dropdown-trigger">
@@ -312,7 +323,7 @@
       </div>
     </span>
     <button id="btn-dice" class="dice" onclick="randomDice()"><i class="fas fa-solid fa-dice fa-2x"></i></button>
-    <button id="btn-reset" class="reset" onclick="resetCategory()">초기화</button>
+    <button id="btn-reset" class="reset has-text-weight-bold" onclick="resetCategory()">초기화</button>
     
     
     <div id="diceresult">
@@ -320,7 +331,7 @@
       </div>
     </div>
   </div>
-
+  
   <br>
   <hr>
   <nav class="level">
@@ -334,12 +345,10 @@
       <span class="listTitle column">어디가 있을까?</span>
     </p>
     <p class="level-item has-text-centered">
-      <a id="likeonoff" class="likeList column" onclick="likeOnOff()"><i class="far fa-regular fa-thumbs-up fa-2x"></i></a>
-      
-      <a id="favoriteonoff" class="favoriteList column" onclick="favoriteOnOff()"><i class="far fa-regular fa-star fa-2x"></i></a>
+
     </p>
     <p class="level-item has-text-centered">
-      <a href="post" class="edit column">글 작성</a>
+      <a href="post" class="button is-warning edit column has-text-weight-bold">글 작성</a>
     </p>
   </nav>
   

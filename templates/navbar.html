@@ -24,17 +24,21 @@
 <body>
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="#">
-        <i class="fas fa-solid fa-gift"></i>
+      <a class="navbar-item" href="/mainpage">
+        <i class="fas fa-solid fa-utensils fa-2x"></i>
       </a>
     </div>
-  
+    
     <div class="navbar-end">
-      <div class="navbar-item">
+      <div class="navbar-item column is-full">
         <div class="buttons">
-          <a class="button is-light" onclick="logout()">
+          <a id="likeonoff" class="button likeList is-warning is-light" onclick="likeOnOff()"><i class="far fa-regular fa-thumbs-up fa-2x"></i></a>
+          <a id="favoriteonoff" class="button favoriteList is-primary is-light" onclick="favoriteOnOff()"><i class="far fa-regular fa-star fa-2x"></i></a>
+          <a href="/mylist" class="button is-success is-light"><i class="far fa-regular fa-clipboard fa-2x"></i></a>
+          <a class="button is-light has-text-weight-bold" onclick="logout()">
             Logout
           </a>
+
         </div>
       </div>
     </div>

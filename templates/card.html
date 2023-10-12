@@ -19,28 +19,31 @@
       </button>
     </header>
     
-    <div class="row">
-      <div class="card-image col-4">
-        <!-- <figure class="image"> -->
-          <img class="image" src="../static/{{ rest['image'] }}" width="320px" alt="Placeholder image">
-          <!-- </figure> -->
+    <a href="/mydetail/{{ rest['num'] }}">
+      <div class="row">
+        <div class="card-image col-4">
+          <!-- <figure class="image"> -->
+            <img class="image" src="../static/{{ rest['image'] }}" width="320px" alt="Placeholder image">
+            <!-- </figure> -->
+          </div>
+          <div class="card-content col-8">
+            <div class="content">
+              <div>{{ rest['category'] }}</div>
+              <br>
+              {{ rest['comment'] }}
+            </div>  
+          </div>
         </div>
-        <div class="card-content col-8">
-          <div class="content">
-            <div>{{ rest['category'] }}</div>
-            <br>
-            {{ rest['comment'] }}
-          </div>  
-        </div>
-      </div>
-      
+      </a>
+
       <footer class="card-footer columns">
-        <a href="#" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">{{ rest['like'] }}</i></a>
-        <a href="#" class="card-footer-item">{{ rest['locate'] }}</a>
+        <a href="/mydetail/{{ rest['num'] }}" class="card-footer-item column is-2"><i class="far fa-regular fa-thumbs-up">{{ rest['like'] }}</i></a>
+        <a href="/mydetail/{{ rest['num'] }}" class="card-footer-item">{{ rest['locate'] }}</a>
       </footer>
-    </div>
-    <br>
-    {% endfor %}
+
+  </div>
+  <br>
+  {% endfor %}
   </div>
     
-    {% endblock %}
+  {% endblock %}
