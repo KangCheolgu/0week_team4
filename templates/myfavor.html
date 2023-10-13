@@ -112,7 +112,7 @@
   <div id="restcard">
 
     {% for ml in mylist %}
-    <div class="card">
+    <div class="card" id="{{ ml['user_id']}}">
       <header class="card-header">
         <p class="card-header-title">
           {{ ml['restaurant'] }}

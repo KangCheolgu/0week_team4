@@ -152,7 +152,8 @@ category={'한식', '중식', '일식', '양식'}
 def post():
     cookie_receive = request.cookies.get('myid')
     review2=db.review.find_one({'user_id':cookie_receive})
-    return render_template('post.html', category=category, review=review2)
+    print(cookie_receive)
+    return render_template('post.html', category=category, review=review2, id = cookie_receive )
 
 @app.route('/mydetail/<idnum>')
 def my_detail(idnum):

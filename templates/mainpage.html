@@ -180,7 +180,7 @@
       let randindex = Math.floor(Math.random() * (restdata.length))
       let randhtml = `
       <div id="recommend" class="recommend">
-        <div class="card recommended">
+        <div class="card recommended" id="${restdata[randindex]['user_id']}">
           <header class="card-header">
             <p class="card-header-title">
               ${restdata[randindex]['restaurant']}
@@ -227,6 +227,7 @@
     function whoIs(num) {
       cookie_id = $.cookie('myid')
       thisid = $(event.target).parents("div").attr("id")
+
       console.log(thisid)
       console.log(cookie_id)
 
