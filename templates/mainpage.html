@@ -10,6 +10,8 @@
 
   <script src="https://kit.fontawesome.com/389f3ca4b2.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">  
+  <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+
   
   <title>오늘 뭐 먹지?</title>
   
@@ -70,8 +72,7 @@
     .recommend {
       /* display: flex; */
       width: 800px;
-      height: 340px;
-      border: 0.5rem solid;
+      box-shadow: 5px 5px;
     }
     .row {
       display: flex;
@@ -105,14 +106,45 @@
     #unfavorite {
       display: none;
     }
+
+    .mainTitleWrapper {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+    
     
   </style>  
 
 
   <script>
+    $(document).ready(function () {
+      search_favorite()
+      
+    });
+
+    function search_favorite() {
+      cookie_id = $.cookie('myid')
+      
+      $.ajax({
+        type: "POST",
+        url: "/searchfavorite",
+        data: {id_cookie_give: cookie_id},
+        success: function(response) {
+          if (response['result'] != 'success') {
+            alert('즐겨찾기 정보 불러오기 오류')
+            return
+          }
+          let rests = response['favorite_list']
+          
+          console.log(rests)
+        },
+      })
+    }
+
     const Sort = {
       BY_LIKE: 'like',
-      BY_RESTAURANT: 'restaurant', 
+      BY_RESTAURANT: 'restaurant'
     }
   
     let sortMode = Sort.BY_RESTAURANT
@@ -153,16 +185,8 @@
             <p class="card-header-title">
               ${restdata[randindex]['restaurant']}
             </p>
-            <button class="card-header-icon" aria-label="more options">
-              <span id="favorite" value="favorite" onclick="unfavorite(this)" class="icon">
-                <i class="far fa-regular fa-star"></i>
-              </span>
-              <span id="unfavorite" value="unfavorite" onclick="favorite(this)" class="icon">
-                <i class="fas fa-regular fa-star"></i>
-              </span>
-            </button>
           </header>
-          <a href="/mydetail/${restdata[randindex]['num']}">
+          <a onclick="whoIs(${restdata[randindex]['num']})">
             <div class="row">
               <div class="card-image col-4">
                 <!-- <figure class="image"> -->
@@ -179,8 +203,8 @@
             </div>
           </a>
           <footer class="card-footer columns">
-            <a href="/mydetail/${restdata[randindex]['num']}" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">${restdata[randindex]['like']}</i></a>
-            <a href="/mydetail/${restdata[randindex]['num']}" class="card-footer-item">${restdata[randindex]['locate']}</a>
+            <a onclick="whoIs(${restdata[randindex]['num']})" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">${restdata[randindex]['like']}</i></a>
+            <a onclick="whoIs(${restdata[randindex]['num']})" class="card-footer-item">${restdata[randindex]['locate']}</a>
           </footer>
         </div>
       </div>
@@ -214,9 +238,6 @@
         window.location.href = page_url
       }
     }
-    function sayhello() {
-      console.log('hello')
-    }
 
     // 게시글 출력
     function showRest() {
@@ -243,7 +264,7 @@
       console.log(rests)
       for (let i = 0; i < rests.length; i++) {
         let rest = rests[i]
-        let id = rest['_id']
+        let id = rest['user_id']
         let restaurant = rest['restaurant']
         let category = rest['category']
         let comment = rest['comment']
@@ -252,41 +273,35 @@
         let image = rest['image']
         let num = rest['num']
 
-        let cardContentHtml = `
+        let cardContentHtml =
+         `
+        <div class="card" id="${id}">
           <header class="card-header">
             <p class="card-header-title">
               ${restaurant}
             </p>
-            <button class="card-header-icon" aria-label="more options">
-              <span id="favorite" value="favorite" onclick="unfavorite(this)" class="icon">
-                <i class="far fa-regular fa-star"></i>
-              </span>
-              <span id="unfavorite" value="unfavorite" onclick="favorite(this)" class="icon">
-                <i class="fas fa-regular fa-star"></i>
-              </span>
-            </button>
           </header>
-          
-          <div class="row">
-            <div class="card-image col-4">
-              <!-- <figure class="image"> -->
-                <img src="../static/${[image]}" width="320px" alt="Placeholder image">
-                <!-- </figure> -->
+          <a onclick="whoIs(${num})">
+            <div class="row">
+              <div class="card-image col-4">
+                <!-- <figure class="image"> -->
+                  <img src="../static/${[image]}" width="320px" alt="Placeholder image">
+                  <!-- </figure> -->
+                </div>
+                <div class="card-content col-8">
+                  <div class="content">
+                    <div>${category}</div>
+                    <br>
+                    ${comment}
+                  </div>  
+                </div>
               </div>
-              <div class="card-content col-8">
-                <div class="content">
-                  <div>${category}</div>
-                  <br>
-                  ${comment}
-                </div>  
-              </div>
-            </div>
-            
+            </a>
             <footer class="card-footer columns">
-              <a href="#" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">${like}</i></a>
-              <a href="#" class="card-footer-item">${locate}</a>
+              <a onclick="whoIs(${num})" class="card-footer-item column is-1"><i class="far fa-regular fa-thumbs-up">${like}</i></a>
+              <a onclick="whoIs(${num})" class="card-footer-item">${locate}</a>
             </footer>
-          <br>
+      <div>
         `
         $('#restcard').append(`
         <div class="card">
@@ -320,33 +335,47 @@
   
   
   <div>
-    <span class="random">오늘 뭐 먹지?&nbsp;&nbsp;&nbsp;</span>
-    <span>
-      <div class="dropdown is-hoverable">
-        <div class="dropdown-trigger">
-          <button id="choice" class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-            <span id="beforechoice">카테고리 선택</span>
-            <span class="icon is-small">  
-              <i class="fas fa-angle-down" aria-hidden="true"></i>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown-menu" id="dropdown-menu" role="menu">
-          <div class="dropdown-content">
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">한식</a>
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">중식</a>
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">일식</a>
-            <a href="#" onclick="dropdownClick(event)" class="dropdown-item">양식</a>
+    <div class="mainTitleWrapper">
+      <span class="random" style="line-height: 30px; font-size: 50px; font-family:'Nanum Gothic', sans-serif;">오늘 뭐 먹지?&nbsp;</span>
+      <span>
+        <div class="dropdown is-hoverable">
+          <div class="dropdown-trigger">
+            <button id="choice" class="button" aria-haspopup="true" aria-controls="dropdown-menu" style="width:193px;">
+              <div class="columns">
+                <div class="column is-10">
+                  <span id="beforechoice">카테고리 선택</span>
+                </div>
+                <div class="column">
+                  <span class="icon is-small">  
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                </div>
+              </div>
+              
+              
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a href="#" onclick="dropdownClick(event)" class="dropdown-item">한식</a>
+              <a href="#" onclick="dropdownClick(event)" class="dropdown-item">중식</a>
+              <a href="#" onclick="dropdownClick(event)" class="dropdown-item">일식</a>
+              <a href="#" onclick="dropdownClick(event)" class="dropdown-item">양식</a>
+            </div>
           </div>
         </div>
-      </div>
-    </span>
-    <button id="btn-dice" class="dice" onclick="randomDice()"><i class="fas fa-solid fa-dice fa-2x"></i></button>
-    <button id="btn-reset" class="reset has-text-weight-bold" onclick="resetCategory()">초기화</button>
-    
+      </span>
+      <button id="btn-dice" class="dice" onclick="randomDice()"><i class="fas fa-solid fa-dice fa-2x"></i></button>
+      <button id="btn-reset" class="reset has-text-weight-bold" onclick="resetCategory()">초기화</button>
+  </div>
+
     
     <div id="diceresult">
       <div id="beforerecommend" class="recommend">
+
+        <div style="line-height: 300px; font-size: 60px; text-align: center;">
+          주사위 버튼을 눌러주세요
+        </div>
       </div>
     </div>
   </div>

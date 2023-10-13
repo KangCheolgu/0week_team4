@@ -34,7 +34,7 @@
 {% endblock %}
 
 {% block like_button %}
-  <button id="like" class="button is-danger" onclick="likeReview({{review['num']}})"> 좋아요 | <span>좋아요 개수 {{likes}}</span></button>
+  <button id="like" class="button is-danger" onclick="likeReview({{review['num']}})"> 좋아요&nbsp;&nbsp;|&nbsp;&nbsp;<span style="font-weight: bold;"> {{likes}}</span></button>
 {% endblock %}
 
 {# {%block jinja_test%} 

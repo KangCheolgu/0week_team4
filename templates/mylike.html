@@ -1,0 +1,151 @@
+<html lang="en">
+<head>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+  <script src="https://kit.fontawesome.com/389f3ca4b2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"> 
+  <title>Document</title>
+
+<style>
+  body {
+  margin-left: 20rem;
+  margin-right: 20rem;
+  }
+  .navbar {
+    width: 800px;
+    background-color: lightsteelblue;
+    margin-bottom: 5px;
+    
+  }
+  .button {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  .fa-star {
+    line-height: 0.8;
+  }
+  .card {
+    width: 800px;
+  }
+
+  .image {
+    margin-bottom: 12px;
+  }
+
+  .random, .listTitle {
+    font-size: 30px;
+    margin-top: 10px;
+  }
+  .level {
+    width: 800px;
+  }
+  .list {
+    display: flex;
+    width: 800px;
+  }
+  .dice {
+    padding-left: 5px;
+    padding-top: 9px;
+  }
+  .reset {
+    padding-top: 17px;
+    
+  }
+  .edit {
+    margin-bottom: 10px;
+  }
+
+  .dropdown-item {
+    background-color: white;
+  }
+
+  .recommend {
+    /* display: flex; */
+    width: 800px;
+    height: 340px;
+    border: 0.5rem solid;
+  }
+  .row {
+    display: flex;
+    justify-content: start;
+  }
+  .favoriteList {
+    display: inline;
+  }
+  .btn-up {
+    position: absolute;
+    scroll-behavior: smooth;
+  }
+  .card-footer-item {
+    margin-left: 10px;
+  }
+
+  .container {
+    position: relative;
+  }
+
+  .block {
+    position: absolute;
+
+  }
+
+
+  #favorite {
+    display: inline;
+  }
+
+  #unfavorite {
+    display: none;
+  }
+  
+</style>
+</head>
+<body>
+  {% include "navbar.html" %}
+
+  <div class="is-size-1 mytitle">내가 좋아요한 글</div>
+  <div id="restcard">
+
+    {% for ml in mylist %}
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">
+          {{ ml['restaurant'] }}
+        </p>
+      </header>
+      
+      <a onclick="whoIs({{ ml['num'] }})">
+        <div class="row">
+          <div class="card-image col-4">
+            <!-- <figure class="image"> -->
+              <img class="image" src="../static/{{ ml['image'] }}" width="320px" alt="Placeholder image">
+              <!-- </figure> -->
+            </div>
+            <div class="card-content col-8">
+              <div class="content">
+                <div>{{ ml['category'] }}</div>
+                <br>
+                {{ ml['comment'] }}
+              </div>  
+            </div>
+          </div>
+        </a>
+  
+        <footer class="card-footer columns">
+          <a onclick="whoIs({{ ml['num'] }})" class="card-footer-item column is-2"><i class="far fa-regular fa-thumbs-up">{{ ml['like'] }}</i></a>
+          <a onclick="whoIs({{ ml['num'] }})" class="card-footer-item">{{ ml['locate'] }}</a>
+        </footer>
+  
+    </div>
+    <br>
+    {% endfor %}
+    </div>
+
+</body>
+</html>

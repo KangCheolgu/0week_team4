@@ -3,12 +3,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
   <style>
     .navbar-item {
       width: 100px;
     }
+    .card-header {
+      background-color: lightsteelblue;
+    }
+    .mytitle {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
   </style>
   <script>
+    $(document).ready(function () {
+        welcome()
+    });
     function deleteCookie(name) {
       document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
@@ -18,6 +30,25 @@
       deleteCookie('myid')
       alert('로그아웃 되었습니다.')
       window.location.reload()
+    }
+    function whoIs(num) {
+      cookie_id = $.cookie('myid')
+      thisid = $(event.target).parents("div").attr("id")
+
+      if(thisid != cookie_id){
+        page_url = "/otherdetail/"+num
+        window.location.href = page_url
+      } else {
+        page_url = "/mydetail/"+num
+        window.location.href = page_url
+      }
+    }
+
+    function welcome() {
+      cookie_id = $.cookie('myid')
+      wel_str = cookie_id + " 님 환영합니다."
+      $('#welcome').empty
+      $('#welcome').append(wel_str)
     }
   </script>
 </head>
@@ -32,8 +63,9 @@
     <div class="navbar-end">
       <div class="navbar-item column is-full">
         <div class="buttons">
-          <a id="likeonoff" class="button likeList is-warning is-light" onclick="likeOnOff()"><i class="far fa-regular fa-thumbs-up fa-2x"></i></a>
-          <a id="favoriteonoff" class="button favoriteList is-primary is-light" onclick="favoriteOnOff()"><i class="far fa-regular fa-star fa-2x"></i></a>
+          <div id="welcome" style="margin-right: 10px; font-weight: bold;"></div>
+          <a href="/mylike" id="likeonoff" class="button likeList is-warning is-light" ><i class="far fa-regular fa-thumbs-up fa-2x"></i></a>
+          <a href="/myfavor" id="favoriteonoff" class="button favoriteList is-primary is-light"><i class="far fa-regular fa-star fa-2x"></i></a>
           <a href="/mylist" class="button is-success is-light"><i class="far fa-regular fa-clipboard fa-2x"></i></a>
           <a class="button is-light has-text-weight-bold" onclick="logout()">
             Logout

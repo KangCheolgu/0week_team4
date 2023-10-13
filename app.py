@@ -301,15 +301,15 @@ def like_review():
 def favorite_review():
     favorite_num=request.form['favorite_num']
     id_cookie_receive = request.cookies.get('myid')  
-    targetId=db.users.find_one({'Id':id_cookie_receive})
+    targetUser=db.users.find_one({'Id':id_cookie_receive})
 
     # 디비의 likelist를 공백 기준으로 소팅하여 like_num 과 같은게 있다면 return failure
     deleted_favoritelist = ""
-    favorite_str = targetId['favoritelist'].split()
+    favorite_list = targetUser['favoritelist'].split()
     delete_toggle = 0
 
     # 기존의 즐겨찾기 리스트에 방금 누른 번호가 있다면 빼고 str을 다시 만든다.
-    for i in favorite_str:
+    for i in favorite_list:
 
         if i == favorite_num:
             delete_toggle = 1
@@ -321,7 +321,7 @@ def favorite_review():
         db.users.update_one({'Id':id_cookie_receive}, {'$set': {'favoritelist': deleted_favoritelist}})
         return jsonify({'result': 'delete'})
         
-    new_favoritelist = targetId['favoritelist'] + favorite_num + " "
+    new_favoritelist = targetUser['favoritelist'] + favorite_num + " "
 
     result = db.users.update_one({'Id':id_cookie_receive}, {'$set': {'favoritelist': new_favoritelist}})
    
@@ -329,6 +329,57 @@ def favorite_review():
       return jsonify({'result': 'success'})
     else:
       return jsonify({'result': 'failure'})
+    
+@app.route('/searchfavorite',methods=['POST'])
+def search_favorite():
+    targetId=request.form['id_cookie_give']
+    targetUser=db.users.find_one({'Id':targetId})
+    favorite_list = targetUser['favoritelist'].split()
+
+    return jsonify({'result': 'success','favorite_list':favorite_list})
+
+@app.route('/mylist', methods=['GET'])
+def my_list():
+    myId = request.cookies.get('myid')
+    rest_list = list(db.review.find({}, {'_id':False}))
+    mylist = []
+    for i in range(len(rest_list)):
+        if rest_list[i]['user_id'] != myId:
+            pass
+        else:
+            mylist += [rest_list[i]]
+    return render_template('mylist.html', mylist=mylist)
+
+@app.route('/mylike', methods=['GET'])
+def my_like():
+    restslist = list()
+    targetId =request.cookies.get('myid')
+    targetUser=db.users.find_one({'Id':targetId})
+    mylike_list = targetUser['likelist'].split()
+    
+    for i in mylike_list:
+        i_int = int(i)
+        mylike = db.review.find_one({'num':i_int})
+        print(mylike) 
+        restslist.append(mylike)
+
+    return render_template('mylike.html', mylist=restslist)
+
+@app.route('/myfavor', methods=['GET'])
+def my_favor():
+    restslist = list()
+    targetId=request.cookies.get('myid')
+    targetUser=db.users.find_one({'Id':targetId})
+    myfavor_list = targetUser['favoritelist'].split()
+    print(myfavor_list)
+
+    for i in myfavor_list:
+        i_int = int(i)
+        myfavor = db.review.find_one({'num':i_int}) 
+        print(myfavor)
+        restslist.append(myfavor)
+
+    return render_template('myfavor.html', mylist=restslist)
     
 @app.route('/delete',methods=['POST'])
 def delete_review():
