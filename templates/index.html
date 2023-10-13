@@ -46,14 +46,14 @@
       };
       let CurrentState = State.UNKNOWN;
 
-      $(document).ready(function () {
-        // alert("페이지가 로딩되었습니다.");
-        $("post-list").html(""); // 포스트 페이지를 한 번 싹 지우고
-        if (CurrentState == State.POST) showReviewPost();
-        else if (CurrentState == State.MY_DETAIL) showMyDetail();
-        else if (CurrentState == State.OTHER_DETAIL) showOtherDetail();
-        // else showUnknownState(); 어떤 페이지를 열지 안왔을 때
-      });
+      // $(document).ready(function () {
+      //   // alert("페이지가 로딩되었습니다.");
+      //   $("post-list").html(""); // 포스트 페이지를 한 번 싹 지우고
+      //   if (CurrentState == State.POST) showReviewPost();
+      //   else if (CurrentState == State.MY_DETAIL) showMyDetail();
+      //   else if (CurrentState == State.OTHER_DETAIL) showOtherDetail();
+      //   // else showUnknownState(); 어떤 페이지를 열지 안왔을 때
+      // });
 
       function likeReview(num) {
         // 라이크 버튼을 누르면
@@ -157,21 +157,6 @@
         });
       }
 
-      function showMyDetail() {
-        $.ajax({
-          type: "GET",
-          url: "/review/mydetail",
-          data: {},
-          success: function (response) {
-            if (response["result"] != "success") {
-              // ?
-              return;
-            } else {
-              alert("불러오기 실패!");
-            }
-          },
-        });
-      }
       function showOtherDetail() {
         $.ajax({
           type: "GET",

@@ -223,23 +223,7 @@
     function favoriteOnOff() {
       return
     }
-
-    function whoIs(num) {
-      cookie_id = $.cookie('myid')
-      thisid = $(event.target).parents("div").attr("id")
-
-      console.log(thisid)
-      console.log(cookie_id)
-
-      if(thisid != cookie_id){
-        page_url = "/otherdetail/"+num
-        window.location.href = page_url
-      } else {
-        page_url = "/mydetail/"+num
-        window.location.href = page_url
-      }
-    }
-
+    
     // 게시글 출력
     function showRest() {
       $('#restcard').empty()

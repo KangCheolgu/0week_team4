@@ -31,9 +31,12 @@
       alert('로그아웃 되었습니다.')
       window.location.reload()
     }
+
     function whoIs(num) {
       cookie_id = $.cookie('myid')
-      thisid = $(event.target).parents("div").attr("id")
+      thisid = $(event.target).closest(".card").attr("id")
+
+      console.log(thisid)
 
       if(thisid != cookie_id){
         page_url = "/otherdetail/"+num

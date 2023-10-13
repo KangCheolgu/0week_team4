@@ -159,7 +159,6 @@ def post():
 def my_detail(idnum):
     idnum_int = int(idnum)
     review2=db.review.find_one({'num':idnum_int})
-    print(review2)
     return render_template('mydetail.html', review=review2)
 
 @app.route('/mydetail_modifying/<idnum>')

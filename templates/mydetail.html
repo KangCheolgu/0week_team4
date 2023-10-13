@@ -1,9 +1,6 @@
 {% extends "index.html" %}
 {% block post_title %}이 가게를 추천해요!{% endblock %}
 
-{% block favorites %}
-  <button class="button is-success" onclick="favoriteReview()">즐겨찾기 추가</button>
-{% endblock %}
 
 {% block restaurant_input %}
   <input id="restaurant" value="{{review['restaurant']}}" disabled />
